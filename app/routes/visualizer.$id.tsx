@@ -1,5 +1,5 @@
 const visualizerId = () => {
-  return <div></div>;
+  return <div>VisualizerId</div>;
 };
 
 export default visualizerId;
