@@ -8,7 +8,6 @@ import {
   imageUrlToPngBlob,
   isHostedUrl,
 } from "./utils";
-import { blob } from "stream/consumers";
 
 type HostingConfig = { subdomain: string };
 type HostedAsset = { url: string };
@@ -20,7 +19,7 @@ export const getorCreateHostingConfig =
     )) as HostingConfig | null;
 
     if (existing?.subdomain) {
-      subdomain: existing.subdomain;
+      return { subdomain: existing.subdomain };
     }
 
     const subdomain = createHostingSlug();
@@ -28,6 +27,7 @@ export const getorCreateHostingConfig =
     try {
       const created = await puter.hosting.create(subdomain, ".");
 
+      await puter.kv.set(HOSTING_CONFIG_KEY, { subdomain: created.subdomain });
       return { subdomain: created.subdomain };
     } catch (e) {
       console.warn(`Could not find subdomain: ${e}`);
